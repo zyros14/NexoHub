@@ -673,8 +673,15 @@ task.spawn(function()
 	end
 end)
 
-local QuestData = {
-	Sea1 = {
+getgenv().QuestData = {
+	Sea1 = {},
+	Sea2 = {},
+	Sea3 = {},
+	Bosses = {Sea1 = {}, Sea2 = {}, Sea3 = {}},
+	Islands = {Sea1 = {}, Sea2 = {}, Sea3 = {}},
+}
+local QuestData = getgenv().QuestData
+QuestData.Sea1 = {
 		{Level = 1, Name = "Bandit", QuestName = "QuestTier1", QuestNumber = 1, CFrameQuest = CFrame.new(1060, 16, 1548), CFrameMob = CFrame.new(1085, 16, 1585)},
 		{Level = 10, Name = "Monkey", QuestName = "JungleQuest", QuestNumber = 1, CFrameQuest = CFrame.new(-1598, 37, 153), CFrameMob = CFrame.new(-1602, 37, 153)},
 		{Level = 15, Name = "Gorilla", QuestName = "JungleQuest", QuestNumber = 2, CFrameQuest = CFrame.new(-1598, 37, 153), CFrameMob = CFrame.new(-1278, 19, -460)},
@@ -701,8 +708,8 @@ local QuestData = {
 		{Level = 350, Name = "Royal Soldier", QuestName = "SkyExp2Quest", QuestNumber = 2, CFrameQuest = CFrame.new(-7905, 5636, -1413), CFrameMob = CFrame.new(-7905, 5636, -1413)},
 		{Level = 375, Name = "Galley Pirate", QuestName = "FountainQuest", QuestNumber = 1, CFrameQuest = CFrame.new(5256, 38, 4049), CFrameMob = CFrame.new(5256, 38, 4049)},
 		{Level = 400, Name = "Galley Captain", QuestName = "FountainQuest", QuestNumber = 2, CFrameQuest = CFrame.new(5256, 38, 4049), CFrameMob = CFrame.new(5256, 38, 4049)},
-	},
-	Sea2 = {
+}
+QuestData.Sea2 = {
 		{Level = 700, Name = "Raider", QuestName = "Area1Quest", QuestNumber = 1, CFrameQuest = CFrame.new(-424, 73, 1836), CFrameMob = CFrame.new(-424, 73, 1836)},
 		{Level = 725, Name = "Mercenary", QuestName = "Area1Quest", QuestNumber = 2, CFrameQuest = CFrame.new(-424, 73, 1836), CFrameMob = CFrame.new(-424, 73, 1836)},
 		{Level = 775, Name = "Swan Pirate", QuestName = "Area2Quest", QuestNumber = 1, CFrameQuest = CFrame.new(636, 73, 918), CFrameMob = CFrame.new(636, 73, 918)},
@@ -725,8 +732,8 @@ local QuestData = {
 		{Level = 1400, Name = "Snow Lurker", QuestName = "FrostQuest", QuestNumber = 2, CFrameQuest = CFrame.new(5668, 26, -6484), CFrameMob = CFrame.new(5668, 26, -6484)},
 		{Level = 1425, Name = "Sea Soldier", QuestName = "ForgottenQuest", QuestNumber = 1, CFrameQuest = CFrame.new(-3053, 236, -10144), CFrameMob = CFrame.new(-3053, 236, -10144)},
 		{Level = 1475, Name = "Water Fighter", QuestName = "ForgottenQuest", QuestNumber = 2, CFrameQuest = CFrame.new(-3053, 236, -10144), CFrameMob = CFrame.new(-3053, 236, -10144)},
-	},
-	Sea3 = {
+}
+QuestData.Sea3 = {
 		{Level = 1500, Name = "Pirate Millionaire", QuestName = "PiratePortQuest", QuestNumber = 1, CFrameQuest = CFrame.new(-290, 47, 5581), CFrameMob = CFrame.new(-290, 47, 5581)},
 		{Level = 1525, Name = "Pistol Billionaire", QuestName = "PiratePortQuest", QuestNumber = 2, CFrameQuest = CFrame.new(-290, 47, 5581), CFrameMob = CFrame.new(-290, 47, 5581)},
 		{Level = 1550, Name = "Dragon Crew Warrior", QuestName = "AmazonQuest", QuestNumber = 1, CFrameQuest = CFrame.new(5832, 51, -1101), CFrameMob = CFrame.new(5832, 51, -1101)},
@@ -770,9 +777,9 @@ local QuestData = {
 		{Level = 2500, Name = "Mythological", QuestName = "TikiQuest5", QuestNumber = 1, CFrameQuest = CFrame.new(-16542, 56, -179), CFrameMob = CFrame.new(-16542, 56, -179)},
 		{Level = 2525, Name = "Ancient Warrior", QuestName = "TikiQuest5", QuestNumber = 2, CFrameQuest = CFrame.new(-16542, 56, -179), CFrameMob = CFrame.new(-16542, 56, -179)},
 		{Level = 2550, Name = "Legendary Sword", QuestName = "TikiQuest6", QuestNumber = 1, CFrameQuest = CFrame.new(-16542, 56, -179), CFrameMob = CFrame.new(-16542, 56, -179)},
-	},
-	Bosses = {
-		Sea1 = {
+}
+QuestData.Bosses = {
+	Sea1 = {
 			{Name = "The Saw", Level = 100, CFrame = CFrame.new(-6883, 19, 1583)},
 			{Name = "Bobby", Level = 15, CFrame = CFrame.new(-1123, 14, 4328)},
 			{Name = "Yeti", Level = 110, CFrame = CFrame.new(1268, 101, -1450)},
