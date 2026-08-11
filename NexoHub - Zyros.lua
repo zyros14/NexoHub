@@ -779,7 +779,7 @@ QuestData.Sea3 = {
 		{Level = 2550, Name = "Legendary Sword", QuestName = "TikiQuest6", QuestNumber = 1, CFrameQuest = CFrame.new(-16542, 56, -179), CFrameMob = CFrame.new(-16542, 56, -179)},
 }
 QuestData.Bosses = {
-	Sea1 = {
+Sea1 = {
 			{Name = "The Saw", Level = 100, CFrame = CFrame.new(-6883, 19, 1583)},
 			{Name = "Bobby", Level = 15, CFrame = CFrame.new(-1123, 14, 4328)},
 			{Name = "Yeti", Level = 110, CFrame = CFrame.new(1268, 101, -1450)},
@@ -813,11 +813,11 @@ QuestData.Bosses = {
 			{Name = "rip_indra True Form", Level = 2100, CFrame = CFrame.new(-5500, 16, -5300)},
 			{Name = "Longma", Level = 2275, CFrame = CFrame.new(-1058, 424, -9329)},
 			{Name = "Soul Reaper", Level = 2450, CFrame = CFrame.new(-9516, 172, 6078)},
-			{Name = "Dough King", Level = 2525, CFrame = CFrame.new(-1058, 424, -9329)},
-		},
-	},
-	Islands = {
-		Sea1 = {
+ 			{Name = "Dough King", Level = 2525, CFrame = CFrame.new(-1058, 424, -9329)},
+ 		},
+}
+QuestData.Islands = {
+	Sea1 = {
 			{Name = "Starter Island", CFrame = CFrame.new(216, 20, 1988)},
 			{Name = "Jungle", CFrame = CFrame.new(-1602, 37, 153)},
 			{Name = "Pirate Village", CFrame = CFrame.new(-1140, 4, 3828)},
@@ -852,9 +852,8 @@ QuestData.Bosses = {
 			{Name = "Ice Cream Island", CFrame = CFrame.new(-840, 66, -10877)},
 			{Name = "Cake Island", CFrame = CFrame.new(-1928, 38, -12840)},
 			{Name = "Chocolate Island", CFrame = CFrame.new(233, 29, -12178)},
-			{Name = "Tiki Outpost", CFrame = CFrame.new(-16549, 56, -179)},
-		},
-	},
+ 			{Name = "Tiki Outpost", CFrame = CFrame.new(-16549, 56, -179)},
+ 		},
 }
 
 function QuestData.GetCurrentSea()
