@@ -23,9 +23,46 @@ end)
 local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local CommF_ = Remotes:WaitForChild("CommF_")
 local CommE_ = Remotes:WaitForChild("CommE_")
+local CommF = Remotes:WaitForChild("CommF")
 local RigControllerEvent = Remotes:WaitForChild("RigControllerEvent")
 local Validator = Remotes:WaitForChild("Validator")
+local Validator2 = Remotes:WaitForChild("Validator2")
 local NetModule = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Net")
+local RegisterAttack = NetModule:WaitForChild("RE"):WaitForChild("RegisterAttack")
+local RegisterHit = NetModule:WaitForChild("RE"):WaitForChild("RegisterHit")
+local ReadPlayerData = NetModule:WaitForChild("RF"):WaitForChild("ReadPlayerData")
+local ParryRemote = Remotes:WaitForChild("ParrySuccess")
+local ParrySuccessAll = Remotes:WaitForChild("ParrySuccessAll")
+local QuestUpdate = Remotes:WaitForChild("QuestUpdate")
+local RefreshQuestPro = Remotes:WaitForChild("RefreshQuestPro")
+local RefreshBartiloQuestPro = Remotes:WaitForChild("RefreshBartiloQuestPro")
+local RefreshDressrosaQuestPro = Remotes:WaitForChild("RefreshDressrosaQuestPro")
+local RefreshZQuestPro = Remotes:WaitForChild("RefreshZQuestPro")
+local RefreshCitizenQuestPro = Remotes:WaitForChild("RefreshCitizenQuestPro")
+local RefreshHauntedPuzzlePro = Remotes:WaitForChild("RefreshHauntedPuzzlePro")
+local ChestRemote = Remotes:WaitForChild("Chest")
+local BreakTree = Remotes:WaitForChild("BreakTree")
+local SendMoney = Remotes:WaitForChild("SendMoney")
+local TradeFunction = Remotes:WaitForChild("TradeFunction")
+local SalesFunction = Remotes:WaitForChild("SalesFunction")
+local Crew = Remotes:WaitForChild("Crew")
+local FriendFinder = Remotes:WaitForChild("FriendFinder")
+local Raids = Remotes:WaitForChild("Raids")
+local Redeem = Remotes:WaitForChild("Redeem")
+local ChangeSetting = Remotes:WaitForChild("ChangeSetting")
+local StatsRemote = Remotes:WaitForChild("Stats")
+local FX = Remotes:WaitForChild("FX")
+local Sound = Remotes:WaitForChild("Sound")
+local TeleportVip = Remotes:WaitForChild("TeleportVip")
+local CheckTeleportGlitchFix = Remotes:WaitForChild("CheckTeleportGlitchFix")
+local RoomManager = Remotes:WaitForChild("RoomManager")
+local Location = Remotes:WaitForChild("Location")
+local Ship = Remotes:WaitForChild("Ship")
+local ShipServiceEvent = Remotes:WaitForChild("ShipServiceEvent")
+local ShipServiceUnreliableEvent = Remotes:WaitForChild("ShipServiceUnreliableEvent")
+local BlockPart = Remotes:WaitForChild("BlockPart")
+local Leviathan = Remotes:WaitForChild("Leviathan")
+local DangerDistance = Remotes:WaitForChild("DangerDistance")
 
 local CombatFramework = Player.PlayerScripts:WaitForChild("CombatFramework")
 local CFRig = ReplicatedStorage:WaitForChild("CombatFramework")
@@ -925,6 +962,129 @@ end)
 StatSection:NewButton("Allocate Stats", "Add points to selected stat", function()
 	local args = {"AddPoint", Settings.SelectStat, Settings.StatPoints}
 	CommF_:InvokeServer(unpack(args))
+end)
+
+local MiscTab = Window:NewTab("Misc")
+local ServerSection = MiscTab:NewSection("Server")
+
+ServerSection:NewButton("Redeem Codes", "Redeem all codes", function()
+	CommF_:InvokeServer("Redeem", "CODE")
+end)
+
+ServerSection:NewButton("Join Crew", "Join a crew", function()
+	CommF_:InvokeServer("Crew", "Join")
+end)
+
+ServerSection:NewButton("Find Friends", "Find friends", function()
+	CommF_:InvokeServer("FriendFinder", "Start")
+end)
+
+ServerSection:NewButton("Start Raid", "Start raid", function()
+	CommF_:InvokeServer("Raids", "Start")
+end)
+
+ServerSection:NewButton("Send Money", "Send money to player", function()
+	CommF_:InvokeServer("SendMoney", 1000)
+end)
+
+local TeleportSection = MiscTab:NewSection("Teleport")
+
+TeleportSection:NewButton("VIP Teleport", "VIP teleport", function()
+	CommF_:InvokeServer("TeleportVip")
+end)
+
+TeleportSection:NewButton("Glitch Fix", "Check teleport glitch", function()
+	CommF_:InvokeServer("CheckTeleportGlitchFix")
+end)
+
+TeleportSection:NewButton("Room Manager", "Room management", function()
+	CommF_:InvokeServer("RoomManager")
+end)
+
+local ShipSection = MiscTab:NewSection("Ship")
+
+ShipSection:NewButton("Spawn Ship", "Spawn ship", function()
+	CommF_:InvokeServer("Ship", "Spawn")
+end)
+
+ShipSection:NewButton("Ship Service", "Ship service", function()
+	CommF_:InvokeServer("ShipServiceEvent")
+end)
+
+ShipSection:NewButton("Block Part", "Block part", function()
+	CommF_:InvokeServer("BlockPart")
+end)
+
+ShipSection:NewButton("Leviathan", "Leviathan", function()
+	CommF_:InvokeServer("Leviathan")
+end)
+
+local CombatSection2 = MiscTab:NewSection("Combat")
+
+CombatSection2:NewButton("Parry", "Parry", function()
+	ParryRemote:FireServer()
+end)
+
+CombatSection2:NewButton("Parry All", "Parry all", function()
+	ParrySuccessAll:FireServer()
+end)
+
+CombatSection2:NewButton("Register Attack", "Register attack", function()
+	RegisterAttack:FireServer()
+end)
+
+CombatSection2:NewButton("Register Hit", "Register hit", function()
+	RegisterHit:FireServer()
+end)
+
+local QuestSection = MiscTab:NewSection("Quest")
+
+QuestSection:NewButton("Refresh Quest", "Refresh quest", function()
+	RefreshQuestPro:FireServer()
+end)
+
+QuestSection:NewButton("Refresh Bartilo", "Refresh Bartilo quest", function()
+	RefreshBartiloQuestPro:FireServer()
+end)
+
+QuestSection:NewButton("Refresh Dressrosa", "Refresh Dressrosa quest", function()
+	RefreshDressrosaQuestPro:FireServer()
+end)
+
+QuestSection:NewButton("Refresh Z Quest", "Refresh Z quest", function()
+	RefreshZQuestPro:FireServer()
+end)
+
+QuestSection:NewButton("Refresh Citizen", "Refresh citizen quest", function()
+	RefreshCitizenQuestPro:FireServer()
+end)
+
+QuestSection:NewButton("Refresh Haunted", "Refresh haunted puzzle", function()
+	RefreshHauntedPuzzlePro:FireServer()
+end)
+
+QuestSection:NewButton("Quest Update", "Update quest", function()
+	QuestUpdate:FireServer()
+end)
+
+local TradeSection = MiscTab:NewSection("Trade")
+
+TradeSection:NewButton("Trade", "Open trade", function()
+	CommF_:InvokeServer("TradeFunction", "Start")
+end)
+
+TradeSection:NewButton("Sales", "Open sales", function()
+	CommF_:InvokeServer("SalesFunction", "Start")
+end)
+
+local SettingSection = MiscTab:NewSection("Settings")
+
+SettingSection:NewButton("Change Setting", "Change game setting", function()
+	CommF_:InvokeServer("ChangeSetting", "Setting")
+end)
+
+SettingSection:NewButton("Danger Distance", "Set danger distance", function()
+	CommF_:InvokeServer("DangerDistance", 100)
 end)
 
 print("NexoHub - Zyros loaded successfully!")
