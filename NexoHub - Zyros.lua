@@ -24,7 +24,6 @@ local Remotes = ReplicatedStorage:WaitForChild("Remotes")
 local CommF_ = Remotes:WaitForChild("CommF_")
 local CommE_ = Remotes:WaitForChild("CommE_")
 local CommF = Remotes:WaitForChild("CommF")
-local RigControllerEvent = Remotes:WaitForChild("RigControllerEvent")
 local Validator = Remotes:WaitForChild("Validator")
 local Validator2 = Remotes:WaitForChild("Validator2")
 local NetModule = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Net")
@@ -254,9 +253,7 @@ function Combat.BladeHitAttack()
 			local Blade = AC.currentWeaponModel
 			if typeof(Blade) == "Instance" then
 				AC.animator.anims.basic[1]:Play()
-				RigControllerEvent:FireServer("weaponChange", Blade.Name)
 				Validator:FireServer(math.floor(Val5 / 1099511627776 * 16777215), Val4)
-				RigControllerEvent:FireServer("hit", bladeHits, 1, "")
 			end
 		end
 	end
