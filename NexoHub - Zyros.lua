@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local Player = Players.LocalPlayer
@@ -147,6 +148,27 @@ getgenv().Settings = {
 	SelectStat = "Melee",
 	StatPoints = 1,
 	SelectSea = "Sea 1",
+	ESPE = false,
+	ESPPlayers = false,
+	ESPFruits = false,
+	ESPBosses = false,
+	ESPChests = false,
+	KillAura = false,
+	KillAuraDistance = 50,
+	FPSBoost = false,
+	AutoAwaken = false,
+	AutoRaceV4 = false,
+	FruitSniper = false,
+	SelectedFruits = {},
+	AutoStats = false,
+	AutoStatsAmount = 1,
+	ServerHop = false,
+	InfiniteJump = false,
+	NoClip = true,
+	SpeedBoost = false,
+	SpeedMultiplier = 1,
+	JumpBoost = false,
+	JumpMultiplier = 1,
 }
 
 local FruitCodes = {
@@ -336,6 +358,269 @@ task.spawn(function()
 				end
 			end)
 		end
+	end
+end)
+
+local ESPFolder = Instance.new("Folder", Workspace)
+ESPFolder.Name = "NexoHub_ESP"
+
+local function CreateESP(instance, color, text)
+	if not instance then return end
+	local adornee = instance:FindFirstChild("HumanoidRootPart") or instance:FindFirstChildWhichIsA("BasePart")
+	if not adornee then return end
+	local highlight = Instance.new("Highlight")
+	highlight.FillColor = color
+	highlight.OutlineColor = color
+	highlight.FillTransparency = 0.5
+	highlight.OutlineTransparency = 0
+	highlight.Adornee = instance
+	highlight.Parent = ESPFolder
+	local billboard = Instance.new("BillboardGui")
+	billboard.Size = UDim2.new(0, 200, 0, 50)
+	billboard.StudsOffset = Vector3.new(0, 3, 0)
+	billboard.Adornee = adornee
+	billboard.Parent = instance
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = text or instance.Name
+	label.TextColor3 = color
+	label.TextScaled = true
+	label.Parent = billboard
+end
+
+local function UpdateESP()
+	ESPFolder:ClearAllChildren()
+	if getgenv().Settings.ESPE then
+		if getgenv().Settings.ESPPlayers then
+			for _, plr in pairs(Players:GetPlayers()) do
+				if plr ~= Player and plr.Character then
+					CreateESP(plr.Color, Color3.new(1, 0, 0), plr.Name)
+				end
+			end
+		end
+		if getgenv().Settings.ESPBosses then
+			for _, enemy in pairs(Workspace.Enemies:GetChildren()) do
+				if enemy:FindFirstChild("HumanoidRootPart") then
+					local isBoss = false
+					for _, bossData in pairs(QuestData.Bosses[QuestData.GetCurrentSea()] or {}) do
+						if enemy.Name:find(bossData.Name) then
+							isBoss = true
+							break
+						end
+					end
+					if isBoss then
+						CreateESP(enemy, Color3.new(1, 0, 1), enemy.Name .. " [BOSS]")
+					end
+				end
+			end
+		end
+		if getgenv().Settings.ESPFruits then
+			for _, obj in pairs(Workspace:GetDescendants()) do
+				if obj:IsA("Model") and obj.Name:find("Fruit") then
+					CreateESP(obj, Color3.new(0, 1, 1), obj.Name)
+				end
+			end
+		end
+		if getgenv().Settings.ESPChests then
+			for _, obj in pairs(Workspace:GetChildren()) do
+				if obj:IsA("Model") and obj:FindFirstChild("Chest") then
+					CreateESP(obj, Color3.new(1, 1, 0), "Chest")
+				end
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(1) do
+		UpdateESP()
+	end
+end)
+
+local function KillAura()
+	if not getgenv().Settings.KillAura then return end
+	local distance = getgenv().Settings.KillAuraDistance or 50
+	for _, enemy in pairs(Workspace.Enemies:GetChildren()) do
+		if IsAlive(enemy) and enemy:FindFirstChild("HumanoidRootPart") then
+			if GetDistance(enemy.HumanoidRootPart.Position) < distance then
+				enemy.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+				enemy.HumanoidRootPart.CanCollide = false
+				enemy.Humanoid:ChangeState(15)
+				enemy.Humanoid.Health = 0
+				sethiddenproperty(Player, "SimulationRadius", math.huge)
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(0.5) do
+		if getgenv().Settings.KillAura then
+			pcall(KillAura)
+		end
+	end
+end)
+
+local function ApplyFPSBoost()
+	if getgenv().Settings.FPSBoost then
+		local cameraShaker = ReplicatedStorage:FindFirstChild("Util") and ReplicatedStorage.Util:FindFirstChild("CameraShaker")
+		if cameraShaker then
+			local camShaker = require(cameraShaker)
+			if camShaker.Stop then camShaker:Stop() end
+		end
+		local deathEffect = ReplicatedStorage:FindFirstChild("Effect") and ReplicatedStorage.Effect:FindFirstChild("Container") and ReplicatedStorage.Effect.Container:FindFirstChild("Death")
+		if deathEffect then
+			hookfunction(require(deathEffect), function() end)
+		end
+		settings().Rendering.QualityLevel = 1
+		workspace:FindFirstChildOfClass("Terrain").WaterWaveSize = 0
+		workspace:FindFirstChildOfClass("Terrain").WaterWaveSpeed = 0
+		workspace:FindFirstChildOfClass("Terrain").WaterReflectance = 0
+		workspace:FindFirstChildOfClass("Terrain").WaterTransparency = 0
+	end
+end
+
+task.spawn(function()
+	while task.wait(2) do
+		pcall(ApplyFPSBoost)
+	end
+end)
+
+local function AutoAwaken()
+	if not getgenv().Settings.AutoAwaken then return end
+	local awakenFrame = Player.PlayerGui:FindFirstChild("Awakening") and Player.PlayerGui.Awakening:FindFirstChild("Frame")
+	if awakenFrame and awakenFrame.Visible then
+		for _, button in pairs(awakenFrame:GetChildren()) do
+			if button:IsA("TextButton") and button.Text == "Awaken" then
+				button:Activate()
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(1) do
+		if getgenv().Settings.AutoAwaken then
+			pcall(AutoAwaken)
+		end
+	end
+end)
+
+local function AutoRaceV4()
+	if not getgenv().Settings.AutoRaceV4 then return end
+	FireRemote("ActivateRaceV4")
+end
+
+task.spawn(function()
+	while task.wait(5) do
+		if getgenv().Settings.AutoRaceV4 then
+			pcall(AutoRaceV4)
+		end
+	end
+end)
+
+local function FruitSniper()
+	if not getgenv().Settings.FruitSniper then return end
+	local fruits = SafeCall(function() return CommF_:InvokeServer("GetFruits") end)
+	if not fruits then return end
+	for _, fruit in pairs(fruits) do
+		if fruit.OnSale and getgenv().Settings.SelectedFruits[fruit.Name] then
+			FireRemote("BuyFruit", fruit.Name)
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(2) do
+		if getgenv().Settings.FruitSniper then
+			pcall(FruitSniper)
+		end
+	end
+end)
+
+local function AutoStats()
+	if not getgenv().Settings.AutoStats then return end
+	local points = getgenv().Settings.AutoStatsAmount or 1
+	local stats = {"Melee", "Defense", "Sword", "Gun", "Demon Fruit"}
+	for _, stat in pairs(stats) do
+		FireRemote("AddPoint", stat, points)
+	end
+end
+
+task.spawn(function()
+	while task.wait(2) do
+		if getgenv().Settings.AutoStats then
+			pcall(AutoStats)
+		end
+	end
+end)
+
+local function ServerHop()
+	if not getgenv().Settings.ServerHop then return end
+	local success, servers = pcall(function()
+		return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+	end)
+	if success and servers and servers.data then
+		for _, server in pairs(servers.data) do
+			if server.playing < server.maxPlayers then
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, Player)
+				break
+			end
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(10) do
+		if getgenv().Settings.ServerHop then
+			pcall(ServerHop)
+		end
+	end
+end)
+
+local function InfiniteJump()
+	if not getgenv().Settings.InfiniteJump then return end
+	if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+		if HRP then
+			HRP.Velocity = Vector3.new(HRP.Velocity.X, 50, HRP.Velocity.Z)
+		end
+	end
+end
+
+UserInputService.JumpRequest:Connect(function()
+	if getgenv().Settings.InfiniteJump then
+		if Character and Humanoid then
+			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		end
+	end
+end)
+
+local function ApplySpeedBoost()
+	if getgenv().Settings.SpeedBoost and Humanoid then
+		Humanoid.WalkSpeed = 16 * (getgenv().Settings.SpeedMultiplier or 1)
+	else
+		if Humanoid then
+			Humanoid.WalkSpeed = 16
+		end
+	end
+end
+
+task.spawn(function()
+	while task.wait(0.5) do
+		pcall(ApplySpeedBoost)
+	end
+end)
+
+local function ApplyJumpBoost()
+	if getgenv().Settings.JumpBoost and Humanoid then
+		Humanoid.JumpPower = 50 * (getgenv().Settings.JumpMultiplier or 1)
+	end
+end
+
+task.spawn(function()
+	while task.wait(0.5) do
+		pcall(ApplyJumpBoost)
 	end
 end)
 
@@ -732,7 +1017,7 @@ end)
 
 task.spawn(function()
 	while task.wait() do
-		if IsAlive(Character) then
+		if getgenv().Settings.NoClip and IsAlive(Character) then
 			for _, part in pairs(Character:GetChildren()) do
 				if part:IsA("BasePart") and part.CanCollide then
 					part.CanCollide = false
@@ -896,6 +1181,104 @@ end)
 
 StatSection:NewButton("Allocate Stats", "Add points to selected stat", function()
 	CommF_:InvokeServer("AddPoint", Settings.SelectStat, Settings.StatPoints)
+end)
+
+local ESPTab = Window:NewTab("ESP")
+local ESPSection = ESPTab:NewSection("ESP Options")
+
+ESPSection:NewToggle("Enable ESP", "Toggle all ESP", function(state)
+	Settings.ESPE = state
+end)
+
+ESPSection:NewToggle("ESP Players", "Highlight players", function(state)
+	Settings.ESPPlayers = state
+end)
+
+ESPSection:NewToggle("ESP Bosses", "Highlight bosses", function(state)
+	Settings.ESPBosses = state
+end)
+
+ESPSection:NewToggle("ESP Fruits", "Highlight devil fruits", function(state)
+	Settings.ESPFruits = state
+end)
+
+ESPSection:NewToggle("ESP Chests", "Highlight chests", function(state)
+	Settings.ESPChests = state
+end)
+
+local CombatTab = Window:NewTab("Combat")
+local KillAuraSection = CombatTab:NewSection("Kill Aura")
+
+KillAuraSection:NewToggle("Kill Aura", "Kill nearby enemies", function(state)
+	Settings.KillAura = state
+end)
+
+KillAuraSection:NewSlider("Aura Distance", "Kill distance", 100, 10, function(value)
+	Settings.KillAuraDistance = value
+end)
+
+local MovementSection = CombatTab:NewSection("Movement")
+
+MovementSection:NewToggle("Speed Boost", "Increase walk speed", function(state)
+	Settings.SpeedBoost = state
+end)
+
+MovementSection:NewSlider("Speed Multiplier", "Speed multiplier", 5, 1, function(value)
+	Settings.SpeedMultiplier = value
+end)
+
+MovementSection:NewToggle("Jump Boost", "Increase jump power", function(state)
+	Settings.JumpBoost = state
+end)
+
+MovementSection:NewSlider("Jump Multiplier", "Jump multiplier", 5, 1, function(value)
+	Settings.JumpMultiplier = value
+end)
+
+MovementSection:NewToggle("Infinite Jump", "Jump unlimited times", function(state)
+	Settings.InfiniteJump = state
+end)
+
+local UtilityTab = Window:NewTab("Utility")
+local FPSBoostSection = UtilityTab:NewSection("Performance")
+
+FPSBoostSection:NewToggle("FPS Boost", "Optimize performance", function(state)
+	Settings.FPSBoost = state
+end)
+
+local AutoSection = UtilityTab:NewSection("Automation")
+
+AutoSection:NewToggle("Auto Awaken", "Auto awaken fruit moves", function(state)
+	Settings.AutoAwaken = state
+end)
+
+AutoSection:NewToggle("Auto Race V4", "Automate race V4 quest", function(state)
+	Settings.AutoRaceV4 = state
+end)
+
+AutoSection:NewToggle("Auto Stats", "Auto allocate all stats", function(state)
+	Settings.AutoStats = state
+end)
+
+local FruitSniperSection = UtilityTab:NewSection("Fruit Sniper")
+
+FruitSniperSection:NewToggle("Fruit Sniper", "Auto-buy selected fruits", function(state)
+	Settings.FruitSniper = state
+end)
+
+FruitSniperSection:NewLabel("Select fruits to auto-buy:")
+
+for _, fruit in pairs(FruitCodes) do
+	FruitSniperSection:NewToggle(fruit, "Auto-buy " .. fruit, function(state)
+		Settings.SelectedFruits[fruit] = state
+	end)
+end
+
+local ServerSection2 = UtilityTab:NewSection("Server")
+
+ServerSection2:NewToggle("Server Hop", "Find new server", function(state)
+	Settings.ServerHop = state
+	if state then pcall(ServerHop) end
 end)
 
 local MiscTab = Window:NewTab("Misc")
